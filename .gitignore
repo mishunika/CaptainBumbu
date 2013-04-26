@@ -11,3 +11,11 @@
 *.lai
 *.la
 *.a
+
+# CodeBlocks artefacts
+*.depend
+*.layout
+
+# Resource files
+*.res
+
