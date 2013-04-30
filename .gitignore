@@ -19,3 +19,6 @@
 # Resource files
 *.res
 
+# Exe files
+*.exe
+

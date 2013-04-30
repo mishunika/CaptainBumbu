@@ -4,7 +4,7 @@
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
 /*  Make the class name into a global variable  */
-char szClassName[ ] = "CodeBlocksWindowsApp";
+char szClassName[ ] = "CaptainBumbu";
 
 int WINAPI WinMain (HINSTANCE hThisInstance,
                      HINSTANCE hPrevInstance,
@@ -30,7 +30,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     wincl.cbClsExtra = 0;                      /* No extra bytes after the window class */
     wincl.cbWndExtra = 0;                      /* structure or the window instance */
     /* Use Windows's default colour as the background of the window */
-    wincl.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
+    wincl.hbrBackground = (HBRUSH) CreateSolidBrush(RGB(255, 255, 255));
 
     /* Register the window class, and if it fails quit the program */
     if (!RegisterClassEx (&wincl))
@@ -40,7 +40,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     hwnd = CreateWindowEx (
            0,                   /* Extended possibilites for variation */
            szClassName,         /* Classname */
-           "Code::Blocks Template Windows App",       /* Title Text */
+           szClassName,         /* Title Text */
            WS_OVERLAPPEDWINDOW, /* default window */
            CW_USEDEFAULT,       /* Windows decides the position */
            CW_USEDEFAULT,       /* where the window ends up on the screen */
@@ -73,9 +73,31 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    HDC hdc;
+    hdc = GetDC (hwnd);
+
     switch (message)                  /* handle the messages */
     {
+        case WM_PAINT:
+            for (int j = 20; j<240; j+=20)
+            {
+                MoveToEx(hdc, 20, j, NULL);
+                LineTo(hdc, 220, j);
+                MoveToEx(hdc, j, 20, NULL);
+                LineTo(hdc, j, 220);
+            }
+            for (int j = 20; j<240; j+=20)
+            {
+                MoveToEx(hdc, 260, j, NULL);
+                LineTo(hdc, 460, j);
+                MoveToEx(hdc, j+240, 20, NULL);
+                LineTo(hdc, j+240, 220);
+            }
+
+        break;
+
         case WM_DESTROY:
+            ReleaseDC(hwnd, hdc);
             PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
             break;
         default:                      /* for messages that we don't deal with */
