@@ -7,9 +7,9 @@ LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 char szClassName[ ] = "CaptainBumbu";
 
 int WINAPI WinMain (HINSTANCE hThisInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR lpszArgument,
-                     int nCmdShow)
+                    HINSTANCE hPrevInstance,
+                    LPSTR lpszArgument,
+                    int nCmdShow)
 {
     HWND hwnd;               /* This is the handle for our window */
     MSG messages;            /* Here messages to the application are saved */
@@ -38,18 +38,18 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
     /* The class is registered, let's create the program*/
     hwnd = CreateWindowEx (
-           0,                   /* Extended possibilites for variation */
-           szClassName,         /* Classname */
-           szClassName,         /* Title Text */
-           WS_OVERLAPPEDWINDOW, /* default window */
-           CW_USEDEFAULT,       /* Windows decides the position */
-           CW_USEDEFAULT,       /* where the window ends up on the screen */
-           544,                 /* The programs width */
-           375,                 /* and height in pixels */
-           HWND_DESKTOP,        /* The window is a child-window to desktop */
-           NULL,                /* No menu */
-           hThisInstance,       /* Program Instance handler */
-           NULL                 /* No Window Creation data */
+               0,                   /* Extended possibilites for variation */
+               szClassName,         /* Classname */
+               szClassName,         /* Title Text */
+               WS_OVERLAPPEDWINDOW, /* default window */
+               CW_USEDEFAULT,       /* Windows decides the position */
+               CW_USEDEFAULT,       /* where the window ends up on the screen */
+               500,                 /* The programs width */
+               375,                 /* and height in pixels */
+               HWND_DESKTOP,        /* The window is a child-window to desktop */
+               NULL,                /* No menu */
+               hThisInstance,       /* Program Instance handler */
+               NULL                 /* No Window Creation data */
            );
 
     /* Make the window visible on the screen */
@@ -78,30 +78,34 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     switch (message)                  /* handle the messages */
     {
-        case WM_PAINT:
-            for (int j = 20; j<240; j+=20)
-            {
-                MoveToEx(hdc, 20, j, NULL);
-                LineTo(hdc, 220, j);
-                MoveToEx(hdc, j, 20, NULL);
-                LineTo(hdc, j, 220);
-            }
-            for (int j = 20; j<240; j+=20)
-            {
-                MoveToEx(hdc, 260, j, NULL);
-                LineTo(hdc, 460, j);
-                MoveToEx(hdc, j+240, 20, NULL);
-                LineTo(hdc, j+240, 220);
-            }
+    case WM_PAINT:
+        for (int j = 20; j<240; j+=20)
+        {
+            MoveToEx(hdc, 20, j, NULL);
+            LineTo(hdc, 220, j);
+            MoveToEx(hdc, j, 20, NULL);
+            LineTo(hdc, j, 220);
+        }
+        for (int j = 20; j<240; j+=20)
+        {
+            MoveToEx(hdc, 260, j, NULL);
+            LineTo(hdc, 460, j);
+            MoveToEx(hdc, j+240, 20, NULL);
+            LineTo(hdc, j+240, 220);
+        }
 
         break;
 
-        case WM_DESTROY:
-            ReleaseDC(hwnd, hdc);
-            PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
-            break;
-        default:                      /* for messages that we don't deal with */
-            return DefWindowProc (hwnd, message, wParam, lParam);
+
+    case WM_ERASEBKGND:
+        return 1;
+
+    case WM_DESTROY:
+        ReleaseDC(hwnd, hdc);
+        PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
+        break;
+    default:                      /* for messages that we don't deal with */
+        return DefWindowProc (hwnd, message, wParam, lParam);
     }
 
     return 0;
