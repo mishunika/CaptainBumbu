@@ -16,12 +16,13 @@ private:
     int _shipNuber[4] = {1, 2, 3, 4};
     int _shipSize[4] = {4, 3, 2, 1};
 
+    std::vector<int> _attackRow;
+    std::vector<int> _attackColl;
+
     /**
     * Shooting flags
     */
     bool _startAttack;
-    bool _horizAttack;
-    bool _vertAttack;
 
     static bool checkBounds(int row, int coll);
     bool checkAvailability(int row, int coll);
@@ -55,7 +56,7 @@ public:
     static const int ATTACK_MISS = 1;
     static const int ATTACK_SUCCESS = 2;
 
-    /// Constants
+    /// Constants tnat marks the orientation of the ship
     static const int ORIENTATION_HORIZONTAL = 0;
     static const int ORIENTATION_VERTICAL = 1;
 

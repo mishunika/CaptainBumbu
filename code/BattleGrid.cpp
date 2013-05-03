@@ -197,81 +197,27 @@ void BattleGrid::dotDead() {
 */
 void BattleGrid::autoAttack() {
     if (_startAttack) {
-        if (_horizAttack) {
-            int bidlaCod = 0;
-            while (1) {
-                int position = rand() % 2;
-                int result = attackPosition(position);
 
-                if (result == ATTACK_MISS) {
-                    _attackResult = result;
-                    break;
-                }
-                if (result == ATTACK_SUCCESS) {
-                    _attackResult = result;
-                    if (checkNeighbours())
-                        dotWounded();
-                    else {
-                        dotDead();
-                        resetAttack();
-                    }
+        while (1) {
+            int position = rand() % 4;
+            int result = attackPosition(position);
 
-                    break;
-                }
-                bidlaCod++;
-                if (bidlaCod < 1000) {
-                    _horizAttack;
-                    break;
-                }
+            if (result == ATTACK_MISS) {
+                _attackResult = result;
+                break;
             }
-        } else if (_vertAttack) {
-            while (1) {
-                int position = rand() % 2 + 2;
-                int result = attackPosition(position);
-
-                if (result == ATTACK_MISS) {
-                    _attackResult = result;
-                    break;
+            if (result == ATTACK_SUCCESS) {
+                _attackResult = result;
+                if (checkNeighbours()) {
+                    dotWounded();
+                } else {
+                    dotDead();
+                    resetAttack();
                 }
-                if (result == ATTACK_SUCCESS) {
-                    _attackResult = result;
-                    if (checkNeighbours())
-                        dotWounded();
-                    else {
-                        dotDead();
-                        resetAttack();
-                    }
-                    break;
-                }
-            }
-        } else {
-            while (1) {
-                int position = rand() % 4;
-                int result = attackPosition(position);
-
-                if (result == ATTACK_MISS) {
-                    _attackResult = result;
-                    break;
-                }
-                if (result == ATTACK_SUCCESS) {
-                    _attackResult = result;
-                    if (checkNeighbours()) {
-                        dotWounded();
-                        if (position == ATTACK_RIGHT || position == ATTACK_LEFT) {
-                            _horizAttack = true;
-                            _vertAttack = false;
-                        } else {
-                            _vertAttack = true;
-                            _horizAttack = false;
-                        }
-                    } else {
-                        dotDead();
-                        resetAttack();
-                    }
-                    break;
-                }
+                break;
             }
         }
+
     } else {
         while (1) {
             int row = rand() % 10;
@@ -306,45 +252,46 @@ void BattleGrid::autoAttack() {
 * @return retuns and int wich represents the result of shooting the position. (Miss, Wound, Nothing)
 */
 int BattleGrid::attackPosition(int position) {
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
-            switch (position) {
-            case ATTACK_RIGHT:
-                // AICI
-                if (_grid[i][j] == MESH_DEAD && checkBounds(i, j + 1) && (_grid[i][j + 1] == MESH_NONE || _grid[i][j + 1] == MESH_SHIP)) {
-                    int result = attack(i, j + 1);
-                    /// Check if it is different from none
-                    if (result != ATTACK_NONE)
-                        return result;
-                }
-                break;
-            case ATTACK_LEFT:
-                if (_grid[i][j] == MESH_DEAD && checkBounds(i, j - 1) && (_grid[i][j - 1] == MESH_NONE || _grid[i][j - 1] == MESH_SHIP)) {
-                    int result = attack(i, j - 1);
-                    /// Check if it is different from none
-                    if (result != ATTACK_NONE)
-                        return result;
-                }
-                break;
-            case ATTACK_UP:
-                if (_grid[i][j] == MESH_DEAD && checkBounds(i - 1, j) && (_grid[i - 1][j] == MESH_NONE || _grid[i - 1][j] == MESH_SHIP)) {
-                    int result = attack(i - 1, j);
-                    /// Check if it is different from none
-                    if (result != ATTACK_NONE)
-                        return result;
-                }
-                break;
-            case ATTACK_DOWN:
-                if (_grid[i][j] == MESH_DEAD && checkBounds(i + 1, j) && (_grid[i + 1][j] == MESH_NONE || _grid[i + 1][j] == MESH_SHIP)) {
-                    int result = attack(i + 1, j);
-                    /// Check if it is different from none
-                    if (result != ATTACK_NONE)
-                        return result;
-                }
-                break;
+
+    for (int k = 0; k < _attackRow.size(); k++) {
+        int i = _attackRow[k];
+        int j = _attackColl[k];
+        switch (position) {
+        case ATTACK_RIGHT:
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i, j + 1) && (_grid[i][j + 1] == MESH_NONE || _grid[i][j + 1] == MESH_SHIP)) {
+                int result = attack(i, j + 1);
+                /// Check if it is different from none
+                if (result != ATTACK_NONE)
+                    return result;
             }
+            break;
+        case ATTACK_LEFT:
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i, j - 1) && (_grid[i][j - 1] == MESH_NONE || _grid[i][j - 1] == MESH_SHIP)) {
+                int result = attack(i, j - 1);
+                /// Check if it is different from none
+                if (result != ATTACK_NONE)
+                    return result;
+            }
+            break;
+        case ATTACK_UP:
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i - 1, j) && (_grid[i - 1][j] == MESH_NONE || _grid[i - 1][j] == MESH_SHIP)) {
+                int result = attack(i - 1, j);
+                /// Check if it is different from none
+                if (result != ATTACK_NONE)
+                    return result;
+            }
+            break;
+        case ATTACK_DOWN:
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i + 1, j) && (_grid[i + 1][j] == MESH_NONE || _grid[i + 1][j] == MESH_SHIP)) {
+                int result = attack(i + 1, j);
+                /// Check if it is different from none
+                if (result != ATTACK_NONE)
+                    return result;
+            }
+            break;
         }
     }
+
     return ATTACK_NONE;
 }
 
@@ -362,6 +309,8 @@ int BattleGrid::attack(int row, int coll) {
         return ATTACK_MISS;
     }
     if (_grid[row][coll] == MESH_SHIP) {
+        _attackRow.push_back(row);
+        _attackColl.push_back(coll);
         _grid[row][coll] = MESH_DEAD;
         return ATTACK_SUCCESS;
     }
@@ -372,8 +321,8 @@ int BattleGrid::attack(int row, int coll) {
 */
 void BattleGrid::resetAttack() {
     _startAttack = false;
-    _horizAttack = false;
-    _vertAttack = false;
+    _attackRow.clear();
+    _attackColl.clear();
 }
 
 
