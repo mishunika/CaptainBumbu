@@ -1,4 +1,3 @@
-#include <windows.h>
 #include "BattleGrid.h"
 #define FRIEND_GRID_X   20
 #define FRIEND_GRID_Y   20
@@ -9,10 +8,12 @@
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
-void drawGrid(HDC hdc, int x, int y, int sampling);
 
 /*  Make the class name into a global variable  */
 char szClassName[ ] = "CaptainBumbu";
+
+BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING);
+BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING);
 
 int WINAPI WinMain (HINSTANCE hThisInstance,
                     HINSTANCE hPrevInstance,
@@ -62,6 +63,9 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
     /* Make the window visible on the screen */
     ShowWindow (hwnd, nCmdShow);
+    friendGrid.shuffleShip();
+    enemyGrid.shuffleShip();
+
 
     /* Run the message loop. It will run until GetMessage() returns 0 */
     while (GetMessage (&messages, NULL, 0, 0))
@@ -89,10 +93,8 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     {
     case WM_PAINT: {
             HDC paintHdc = BeginPaint(hwnd, &ps);
-
-            drawGrid(paintHdc, FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING);
-            drawGrid(paintHdc, ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING);
-
+            friendGrid.drawGrid(paintHdc);
+            enemyGrid.drawGrid(paintHdc);
 
 
             EndPaint(hwnd, &ps);
@@ -111,16 +113,4 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     }
 
     return 0;
-}
-
-void drawGrid(HDC hdc, int x, int y, int sampling) {
-    for (int i = x; i <= x + sampling * 10; i += sampling) {
-        MoveToEx(hdc, i, y, NULL);
-        LineTo(hdc, i, y + sampling * 10);
-    }
-
-    for (int i = y; i <= y + sampling * 10; i += sampling) {
-        MoveToEx(hdc, x, i, NULL);
-        LineTo(hdc, x + sampling * 10, i);
-    }
 }

@@ -1,10 +1,14 @@
 #include "BattleGrid.h"
 
 BattleGrid::BattleGrid() {
-    for (int i = 0; i < 4; i++) {
-        _startAttack = false;
+    _startAttack = false;
+}
 
-    }
+BattleGrid::BattleGrid(int xPos, int yPos, int sampling) {
+    _xPos = xPos;
+    _yPos = yPos;
+    _sampling = sampling;
+    _startAttack = false;
 }
 
 /**
@@ -325,5 +329,26 @@ void BattleGrid::resetAttack() {
     _attackColl.clear();
 }
 
+/**
+* Draw the grid of ships
+*/
+void BattleGrid::drawGrid(HDC hdc) {
+    HPEN hpen = CreatePen(PS_DOT, 1, RGB(166, 166, 166));
+    SelectObject(hdc, hpen);
+    for (int i = _xPos; i <= _xPos + _sampling * 10; i += _sampling) {
+        MoveToEx(hdc, i, _yPos, NULL);
+        LineTo(hdc, i, _yPos + _sampling * 10);
+    }
+
+    for (int i = _yPos; i <= _yPos + _sampling * 10; i += _sampling) {
+        MoveToEx(hdc, _xPos, i, NULL);
+        LineTo(hdc, _xPos + _sampling * 10, i);
+    }
+    DeleteObject(hpen);
+}
+
+/**
+* Draw friend ships
+*/
 
 
