@@ -79,19 +79,19 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     switch (message)                  /* handle the messages */
     {
     case WM_PAINT:
-        for (int j = 20; j<480; j+=40)
+        for (int j = 20; j<460; j+=40)
         {
             MoveToEx(hdc, 20, j, NULL);
-            LineTo(hdc, 460, j);
+            LineTo(hdc, 420, j);
             MoveToEx(hdc, j, 20, NULL);
-            LineTo(hdc, j, 460);
+            LineTo(hdc, j, 420);
         }
-        for (int j = 20; j<480; j+=40)
+        for (int j = 20; j<460; j+=40)
         {
-            MoveToEx(hdc, 500, j, NULL);
-            LineTo(hdc, 860, j);
-            MoveToEx(hdc, j+480, 20, NULL);
-            LineTo(hdc, j+480, 460);
+            MoveToEx(hdc, 480, j, NULL);
+            LineTo(hdc, 880, j);
+            MoveToEx(hdc, j+460, 20, NULL);
+            LineTo(hdc, j+460, 420);
         }
 
         break;
