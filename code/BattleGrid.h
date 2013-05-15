@@ -20,6 +20,7 @@ private:
     int _xPos;
     int _yPos;
     int _sampling;
+    bool _enemy;
 
     std::vector<int> _attackRow;
     std::vector<int> _attackColl;
@@ -69,13 +70,14 @@ public:
     int _attackResult;
 
     BattleGrid();
-    BattleGrid(int xPos, int yPos, int sampling);
+    BattleGrid(int xPos, int yPos, int sampling, bool enemy);
 
     void shuffleShip();
     void autoAttack();
     void showGrid();
 
     void drawGrid(HDC hdc);
+    void drawFriendShip(HDC hdc);
 };
 
 #endif
