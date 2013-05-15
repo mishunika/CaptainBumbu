@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
+#include <windows.h>
 
 
 class BattleGrid {
@@ -15,6 +16,10 @@ private:
     */
     int _shipNuber[4] = {1, 2, 3, 4};
     int _shipSize[4] = {4, 3, 2, 1};
+
+    int _xPos;
+    int _yPos;
+    int _sampling;
 
     std::vector<int> _attackRow;
     std::vector<int> _attackColl;
@@ -64,10 +69,13 @@ public:
     int _attackResult;
 
     BattleGrid();
+    BattleGrid(int xPos, int yPos, int sampling);
 
     void shuffleShip();
     void autoAttack();
     void showGrid();
+
+    void drawGrid(HDC hdc);
 };
 
 #endif
