@@ -1,4 +1,5 @@
 #include "BattleGrid.h"
+#include "BattleGrid.cpp"
 #define FRIEND_GRID_X   20
 #define FRIEND_GRID_Y   20
 #define ENEMY_GRID_X    480
