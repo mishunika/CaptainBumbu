@@ -1,7 +1,15 @@
 #include <windows.h>
+#include "BattleGrid.h"
+#define FRIEND_GRID_X   20
+#define FRIEND_GRID_Y   20
+#define ENEMY_GRID_X    480
+#define ENEMY_GRID_Y    20
+
+#define SAMPLING        40
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
+void drawGrid(HDC hdc, int x, int y, int sampling);
 
 /*  Make the class name into a global variable  */
 char szClassName[ ] = "CaptainBumbu";
@@ -38,18 +46,18 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
     /* The class is registered, let's create the program*/
     hwnd = CreateWindowEx (
-               0,                   /* Extended possibilites for variation */
-               szClassName,         /* Classname */
-               szClassName,         /* Title Text */
-               WS_OVERLAPPED | WS_BORDER | WS_SYSMENU, /* default window */
-               CW_USEDEFAULT,       /* Windows decides the position */
-               CW_USEDEFAULT,       /* where the window ends up on the screen */
-               900,                 /* The programs width */
-               600,                 /* and height in pixels */
-               HWND_DESKTOP,        /* The window is a child-window to desktop */
-               NULL,                /* No menu */
-               hThisInstance,       /* Program Instance handler */
-               NULL                 /* No Window Creation data */
+             0,                   /* Extended possibilites for variation */
+             szClassName,         /* Classname */
+             "Code::Blocks Template Windows App",       /* Title Text */
+             WS_OVERLAPPEDWINDOW, /* default window */
+             CW_USEDEFAULT,       /* Windows decides the position */
+             CW_USEDEFAULT,       /* where the window ends up on the screen */
+             1000,                 /* The programs width */
+             600,                 /* and height in pixels */
+             HWND_DESKTOP,        /* The window is a child-window to desktop */
+             NULL,                /* No menu */
+             hThisInstance,       /* Program Instance handler */
+             NULL                 /* No Window Creation data */
            );
 
     /* Make the window visible on the screen */
@@ -73,30 +81,22 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
 
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    PAINTSTRUCT ps;
     HDC hdc;
     hdc = GetDC (hwnd);
 
     switch (message)                  /* handle the messages */
     {
-    case WM_PAINT:
-        for (int j = 20; j<480; j+=40)
-        {
-            MoveToEx(hdc, 20, j, NULL);
-            LineTo(hdc, 460, j);
-            MoveToEx(hdc, j, 20, NULL);
-            LineTo(hdc, j, 460);
-        }
-        for (int j = 20; j<480; j+=40)
-        {
-            MoveToEx(hdc, 500, j, NULL);
-            LineTo(hdc, 860, j);
-            MoveToEx(hdc, j+480, 20, NULL);
-            LineTo(hdc, j+480, 460);
-        }
+    case WM_PAINT: {
+            HDC paintHdc = BeginPaint(hwnd, &ps);
 
+            drawGrid(paintHdc, FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING);
+            drawGrid(paintHdc, ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING);
+
+
+            EndPaint(hwnd, &ps);
+        }
         break;
-
-
     case WM_ERASEBKGND:
         return 1;
 
@@ -105,8 +105,21 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
         break;
     default:                      /* for messages that we don't deal with */
+        ReleaseDC(hwnd, hdc);
         return DefWindowProc (hwnd, message, wParam, lParam);
     }
 
     return 0;
+}
+
+void drawGrid(HDC hdc, int x, int y, int sampling) {
+    for (int i = x; i <= x + sampling * 10; i += sampling) {
+        MoveToEx(hdc, i, y, NULL);
+        LineTo(hdc, i, y + sampling * 10);
+    }
+
+    for (int i = y; i <= y + sampling * 10; i += sampling) {
+        MoveToEx(hdc, x, i, NULL);
+        LineTo(hdc, x + sampling * 10, i);
+    }
 }
