@@ -15,6 +15,7 @@
 # CodeBlocks artefacts
 *.depend
 *.layout
+*.cbp
 
 # Resource files
 *.res
