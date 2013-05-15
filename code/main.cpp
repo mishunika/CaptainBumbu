@@ -1,11 +1,12 @@
 #include "BattleGrid.h"
-#include "BattleGrid.cpp"
-#define FRIEND_GRID_X   20
-#define FRIEND_GRID_Y   20
-#define ENEMY_GRID_X    480
-#define ENEMY_GRID_Y    20
+//#include "BattleGrid.cpp"
+#define IDC_BUTTON_RANDOM   01
+#define FRIEND_GRID_X       20
+#define FRIEND_GRID_Y       20
+#define ENEMY_GRID_X        480
+#define ENEMY_GRID_Y        20
 
-#define SAMPLING        40
+#define SAMPLING            40
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
@@ -15,7 +16,9 @@ char szClassName[ ] = "CaptainBumbu";
 
 BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING, false);
 BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING, true);
+HBITMAP hatch;
 
+HINSTANCE hInst;
 int WINAPI WinMain (HINSTANCE hThisInstance,
                     HINSTANCE hPrevInstance,
                     LPSTR lpszArgument,
@@ -24,6 +27,8 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     HWND hwnd;               /* This is the handle for our window */
     MSG messages;            /* Here messages to the application are saved */
     WNDCLASSEX wincl;        /* Data structure for the windowclass */
+
+    hInst = hThisInstance;
 
     /* The Window structure */
     wincl.hInstance = hThisInstance;
@@ -88,14 +93,33 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 {
     PAINTSTRUCT ps;
     HDC hdc;
+    HWND hBtnRandom;
     hdc = GetDC (hwnd);
+    hatch = (HBITMAP)LoadImage(hInst, "bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
     switch (message)                  /* handle the messages */
     {
+
+    case WM_CREATE: {
+            hBtnRandom = CreateWindowEx(NULL,
+                            TEXT("button"),
+                            "Random",
+                            WS_TABSTOP | WS_VISIBLE |
+                            WS_CHILD | BS_DEFPUSHBUTTON | BS_TOP,
+                            30, 450,
+                            70, 25,
+                            hwnd,
+                            (HMENU)IDC_BUTTON_RANDOM,
+                            hInst,
+                            NULL);
+        }
+        break;
+
     case WM_PAINT: {
             HDC paintHdc = BeginPaint(hwnd, &ps);
 
             friendGrid.drawGrid(paintHdc);
+            friendGrid.drawLivingShips(paintHdc, hatch);
             enemyGrid.drawGrid(paintHdc);
 
 
@@ -104,6 +128,27 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         break;
     case WM_ERASEBKGND:
         return 1;
+
+    case WM_COMMAND: {
+
+            switch (LOWORD(wParam)) {
+            case IDC_BUTTON_RANDOM:
+                friendGrid.shuffleShip();
+                RECT rect;
+                rect.left = friendGrid.getXpos() - 1;
+                rect.right = friendGrid.getXpos() + friendGrid.getSampling() * 10 + 1;
+                rect.top = friendGrid.getYpos() - 1;
+                rect.bottom = friendGrid.getYpos() + friendGrid.getSampling() * 10 + 1;
+                HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
+                FillRect(hdc, &rect, hBrush);
+                InvalidateRect(hwnd, &rect, false);
+                //DeleteObject(hBrush);
+
+
+                break;
+            }
+        }
+        break;
 
     case WM_DESTROY:
         ReleaseDC(hwnd, hdc);

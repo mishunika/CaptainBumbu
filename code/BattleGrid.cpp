@@ -383,4 +383,32 @@ void BattleGrid::drawFriendShip(HDC hdc) {
     DeleteObject(hpen);
 }
 
+void BattleGrid::drawLivingShips(HDC hdc, HBITMAP hatch) {
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    SelectObject (hdcMem, hatch);
 
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            if (_grid[i][j] == MESH_SHIP) {
+                BitBlt(hdc, _xPos + j * _sampling + 3, _yPos + i * _sampling + 1, 35, 39, hdcMem, 0, 0, SRCCOPY);
+            }
+        }
+    }
+
+    DeleteDC(hdcMem);
+}
+
+/**
+* Getters and setters
+*/
+int BattleGrid::getXpos() {
+    return _xPos;
+}
+
+int BattleGrid::getYpos() {
+    return _yPos;
+}
+
+int BattleGrid::getSampling() {
+    return _sampling;
+}

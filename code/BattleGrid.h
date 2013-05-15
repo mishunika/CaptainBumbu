@@ -78,6 +78,15 @@ public:
 
     void drawGrid(HDC hdc);
     void drawFriendShip(HDC hdc);
+    void drawLivingShips(HDC hdc, HBITMAP hatch);
+
+    /**
+    * Getters & setters
+    */
+    int getXpos();
+    int getYpos();
+    int getSampling();
+
 };
 
 #endif
