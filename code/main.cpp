@@ -12,8 +12,8 @@ LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 /*  Make the class name into a global variable  */
 char szClassName[ ] = "CaptainBumbu";
 
-BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING);
-BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING);
+BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING, false);
+BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING, true);
 
 int WINAPI WinMain (HINSTANCE hThisInstance,
                     HINSTANCE hPrevInstance,
@@ -93,6 +93,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     {
     case WM_PAINT: {
             HDC paintHdc = BeginPaint(hwnd, &ps);
+
             friendGrid.drawGrid(paintHdc);
             enemyGrid.drawGrid(paintHdc);
 

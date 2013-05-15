@@ -4,17 +4,19 @@ BattleGrid::BattleGrid() {
     _startAttack = false;
 }
 
-BattleGrid::BattleGrid(int xPos, int yPos, int sampling) {
+BattleGrid::BattleGrid(int xPos, int yPos, int sampling, bool enemy) {
     _xPos = xPos;
     _yPos = yPos;
     _sampling = sampling;
     _startAttack = false;
+    _enemy = enemy;
 }
 
 /**
 * Shuffles the the ships on the grid
 */
 void BattleGrid::shuffleShip() {
+    srand (time(NULL));
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
             _grid[i][j] = 0;
@@ -345,10 +347,40 @@ void BattleGrid::drawGrid(HDC hdc) {
         LineTo(hdc, _xPos + _sampling * 10, i);
     }
     DeleteObject(hpen);
+    if (!_enemy)
+        drawFriendShip(hdc);
 }
 
 /**
 * Draw friend ships
 */
+void BattleGrid::drawFriendShip(HDC hdc) {
+    HPEN hpen = CreatePen(PS_SOLID, 2, RGB(120, 120, 120));
+    SelectObject(hdc, hpen);
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            if (_grid[i][j] == MESH_SHIP || _grid[i][j] == MESH_DEAD) {
+                if (!checkBounds(i, j - 1) || (_grid[i][j - 1] == MESH_NONE || _grid[i][j - 1] == MESH_MISS)) {
+                    MoveToEx(hdc, _xPos + j * _sampling, _yPos + i * _sampling, NULL);
+                    LineTo(hdc, _xPos + j * _sampling, _yPos + i * _sampling + _sampling);
+                }
+                if (!checkBounds(i, j + 1) || (_grid[i][j + 1] == MESH_NONE || _grid[i][j + 1] == MESH_MISS)) {
+                    MoveToEx(hdc, _xPos + j * _sampling + _sampling, _yPos + i * _sampling, NULL);
+                    LineTo(hdc, _xPos + j * _sampling + _sampling, _yPos + i * _sampling + _sampling);
+                }
+                if (!checkBounds(i - 1, j) || (_grid[i - 1][j] == MESH_NONE || _grid[i - 1][j] == MESH_MISS)) {
+                    MoveToEx(hdc, _xPos + j * _sampling, _yPos + i * _sampling, NULL);
+                    LineTo(hdc, _xPos + j * _sampling + _sampling, _yPos + i * _sampling);
+                }
+                if (!checkBounds(i + 1, j) || (_grid[i + 1][j] == MESH_NONE || _grid[i + 1][j] == MESH_MISS)) {
+                    MoveToEx(hdc, _xPos + j * _sampling, _yPos + i * _sampling + _sampling, NULL);
+                    LineTo(hdc, _xPos + j * _sampling + _sampling, _yPos + i * _sampling + _sampling);
+                }
+            }
+        }
+    }
+    DeleteObject(hpen);
+}
 
 
