@@ -41,11 +41,11 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
                0,                   /* Extended possibilites for variation */
                szClassName,         /* Classname */
                szClassName,         /* Title Text */
-               WS_OVERLAPPEDWINDOW, /* default window */
+               WS_OVERLAPPED | WS_BORDER | WS_SYSMENU, /* default window */
                CW_USEDEFAULT,       /* Windows decides the position */
                CW_USEDEFAULT,       /* where the window ends up on the screen */
-               500,                 /* The programs width */
-               375,                 /* and height in pixels */
+               900,                 /* The programs width */
+               600,                 /* and height in pixels */
                HWND_DESKTOP,        /* The window is a child-window to desktop */
                NULL,                /* No menu */
                hThisInstance,       /* Program Instance handler */
@@ -79,19 +79,19 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     switch (message)                  /* handle the messages */
     {
     case WM_PAINT:
-        for (int j = 20; j<240; j+=20)
+        for (int j = 20; j<480; j+=40)
         {
             MoveToEx(hdc, 20, j, NULL);
-            LineTo(hdc, 220, j);
-            MoveToEx(hdc, j, 20, NULL);
-            LineTo(hdc, j, 220);
-        }
-        for (int j = 20; j<240; j+=20)
-        {
-            MoveToEx(hdc, 260, j, NULL);
             LineTo(hdc, 460, j);
-            MoveToEx(hdc, j+240, 20, NULL);
-            LineTo(hdc, j+240, 220);
+            MoveToEx(hdc, j, 20, NULL);
+            LineTo(hdc, j, 460);
+        }
+        for (int j = 20; j<480; j+=40)
+        {
+            MoveToEx(hdc, 500, j, NULL);
+            LineTo(hdc, 860, j);
+            MoveToEx(hdc, j+480, 20, NULL);
+            LineTo(hdc, j+480, 460);
         }
 
         break;
