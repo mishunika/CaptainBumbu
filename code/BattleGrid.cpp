@@ -398,6 +398,17 @@ void BattleGrid::drawLivingShips(HDC hdc, HBITMAP hatch) {
     DeleteDC(hdcMem);
 }
 
+void BattleGrid::invalidateGrid(HWND hwnd, HDC hdc) {
+    RECT rect;
+    rect.left = _xPos - 1;
+    rect.right = _xPos + _sampling * 10 + 1;
+    rect.top = _yPos - 1;
+    rect.bottom = _yPos + _sampling * 10 + 1;
+    HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
+    FillRect(hdc, &rect, hBrush);
+    InvalidateRect(hwnd, &rect, false);
+}
+
 /**
 * Getters and setters
 */

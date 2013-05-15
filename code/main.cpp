@@ -134,17 +134,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             switch (LOWORD(wParam)) {
             case IDC_BUTTON_RANDOM:
                 friendGrid.shuffleShip();
-                RECT rect;
-                rect.left = friendGrid.getXpos() - 1;
-                rect.right = friendGrid.getXpos() + friendGrid.getSampling() * 10 + 1;
-                rect.top = friendGrid.getYpos() - 1;
-                rect.bottom = friendGrid.getYpos() + friendGrid.getSampling() * 10 + 1;
-                HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
-                FillRect(hdc, &rect, hBrush);
-                InvalidateRect(hwnd, &rect, false);
-                //DeleteObject(hBrush);
-
-
+                friendGrid.invalidateGrid(hwnd, hdc);
                 break;
             }
         }
