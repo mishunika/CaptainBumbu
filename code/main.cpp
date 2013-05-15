@@ -79,7 +79,11 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     switch (message)                  /* handle the messages */
     {
     case WM_PAINT:
-       for (int j = 20; j<460; j+=40)
+<<<<<<< HEAD
+        for (int j = 20; j<460; j+=40)
+=======
+        for (int j = 20; j<460; j+=40)
+>>>>>>> Jenea
         {
             MoveToEx(hdc, 20, j, NULL);
             LineTo(hdc, 420, j);
