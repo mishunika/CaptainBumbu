@@ -1,6 +1,7 @@
 #include "BattleGrid.h"
-//#include "BattleGrid.cpp"
+#include "BattleGrid.cpp"
 #define IDC_BUTTON_RANDOM   01
+#define IDC_START_GAME      02
 #define FRIEND_GRID_X       20
 #define FRIEND_GRID_Y       20
 #define ENEMY_GRID_X        480
@@ -16,8 +17,9 @@ char szClassName[ ] = "CaptainBumbu";
 
 BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING, false);
 BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING, true);
-HBITMAP hatch;
+HBITMAP hatch, miss, dead;
 
+bool startGame = false;
 HINSTANCE hInst;
 int WINAPI WinMain (HINSTANCE hThisInstance,
                     HINSTANCE hPrevInstance,
@@ -93,14 +95,32 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 {
     PAINTSTRUCT ps;
     HDC hdc;
-    HWND hBtnRandom;
+    HWND hBtnRandom, hBtnStartGame;
     hdc = GetDC (hwnd);
-    hatch = (HBITMAP)LoadImage(hInst, "bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+
+    bool friendHit = false;
+    if (friendGrid._attackResult != BattleGrid::ATTACK_MISS) {
+        while (friendGrid._attackResult != BattleGrid::ATTACK_MISS) {
+            friendGrid.autoAttack();
+            if (friendGrid._attackResult != BattleGrid::ATTACK_NONE)
+                friendHit = true;
+            if (friendGrid._attackResult == BattleGrid::ATTACK_MISS)
+                enemyGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
+        }
+    } else
+        enemyGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
+
+    if (friendHit)
+        friendGrid.invalidateGrid(hwnd, hdc);
 
     switch (message)                  /* handle the messages */
     {
 
     case WM_CREATE: {
+            hatch = (HBITMAP)LoadImage(hInst, "../bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            dead  = (HBITMAP)LoadImage(hInst, "../bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            miss  = (HBITMAP)LoadImage(hInst, "../bmp/punctisor.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             hBtnRandom = CreateWindowEx(NULL,
                             TEXT("button"),
                             "Random",
@@ -112,6 +132,18 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                             (HMENU)IDC_BUTTON_RANDOM,
                             hInst,
                             NULL);
+
+            hBtnStartGame = CreateWindowEx(NULL,
+                            TEXT("button"),
+                            "Start",
+                            WS_TABSTOP | WS_VISIBLE |
+                            WS_CHILD | BS_DEFPUSHBUTTON | BS_TOP,
+                            150, 450,
+                            70, 25,
+                            hwnd,
+                            (HMENU)IDC_START_GAME,
+                            hInst,
+                            NULL);
         }
         break;
 
@@ -120,22 +152,49 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
             friendGrid.drawGrid(paintHdc);
             friendGrid.drawLivingShips(paintHdc, hatch);
+            friendGrid.drawDamage(paintHdc, dead, miss);
+
             enemyGrid.drawGrid(paintHdc);
+            enemyGrid.drawDamage(paintHdc, dead, miss);
 
 
             EndPaint(hwnd, &ps);
+            //ReleaseDC(hwnd, paintHdc);
         }
         break;
-    case WM_ERASEBKGND:
-        return 1;
+    /*case WM_ERASEBKGND:
+        return 1;*/
 
     case WM_COMMAND: {
-
             switch (LOWORD(wParam)) {
             case IDC_BUTTON_RANDOM:
-                friendGrid.shuffleShip();
-                friendGrid.invalidateGrid(hwnd, hdc);
+                if (!startGame) {
+                    friendGrid.shuffleShip();
+                    friendGrid.invalidateGrid(hwnd, hdc);
+                }
                 break;
+            case IDC_START_GAME:
+                startGame = true;
+                enemyGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
+                friendGrid._attackResult = BattleGrid::ATTACK_MISS;
+                break;
+            }
+        }
+        break;
+    case WM_LBUTTONUP: {
+            if (startGame) {
+                int xPos = LOWORD (lParam);
+                int yPos = HIWORD (lParam);
+                if (enemyGrid._attackResult == BattleGrid::ATTACK_NONE || enemyGrid._attackResult == BattleGrid::ATTACK_SUCCESS) {
+                    int result = enemyGrid.attackByCoords(xPos, yPos);
+                    if (result == BattleGrid::ATTACK_MISS)
+                        friendGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
+
+                    if (result != BattleGrid::ATTACK_NONE)
+                        enemyGrid.invalidateGrid(hwnd, hdc);
+                } else {
+                    friendGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
+                }
             }
         }
         break;
@@ -148,6 +207,6 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         ReleaseDC(hwnd, hdc);
         return DefWindowProc (hwnd, message, wParam, lParam);
     }
-
+    ReleaseDC(hwnd, hdc);
     return 0;
 }

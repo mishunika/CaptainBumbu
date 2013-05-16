@@ -80,14 +80,8 @@ public:
     void drawFriendShip(HDC hdc);
     void drawLivingShips(HDC hdc, HBITMAP hatch);
     void invalidateGrid(HWND hwnd, HDC hdc);
-
-    /**
-    * Getters & setters
-    */
-    int getXpos();
-    int getYpos();
-    int getSampling();
-
+    void drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss);
+    int attackByCoords(int x, int y);
 };
 
 #endif

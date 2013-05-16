@@ -303,8 +303,8 @@ int BattleGrid::attackPosition(int position) {
 
 /**
 * Attacks the grid. If somenthig was shoot then the modifications are maid into the main grid
-* @param of type int. Represents the row coordinate.
-* @param of type
+* @param int, represents the row coordinate
+* @param int, represents the column coordinate
 */
 int BattleGrid::attack(int row, int coll) {
     if (_grid[row][coll] == MESH_MISS || _grid[row][coll] == MESH_DEAD)
@@ -333,6 +333,7 @@ void BattleGrid::resetAttack() {
 
 /**
 * Draw the grid of ships
+* @param HDC handle for the displayed DC, for painting
 */
 void BattleGrid::drawGrid(HDC hdc) {
     HPEN hpen = CreatePen(PS_DOT, 1, RGB(166, 166, 166));
@@ -352,7 +353,8 @@ void BattleGrid::drawGrid(HDC hdc) {
 }
 
 /**
-* Draw friend ships
+* Draw ships for the friend grid
+* @param HDC handle for the displayed DC, for painting
 */
 void BattleGrid::drawFriendShip(HDC hdc) {
     HPEN hpen = CreatePen(PS_SOLID, 2, RGB(120, 120, 120));
@@ -383,6 +385,11 @@ void BattleGrid::drawFriendShip(HDC hdc) {
     DeleteObject(hpen);
 }
 
+/**
+*
+* @param HDC handle for the displayed DC, for painting
+* @param HBITMAP hatch bitmap to the hatched element
+*/
 void BattleGrid::drawLivingShips(HDC hdc, HBITMAP hatch) {
     HDC hdcMem = CreateCompatibleDC(hdc);
     SelectObject (hdcMem, hatch);
@@ -394,10 +401,38 @@ void BattleGrid::drawLivingShips(HDC hdc, HBITMAP hatch) {
             }
         }
     }
-
     DeleteDC(hdcMem);
 }
 
+/**
+* Draw all the dead & missed elements
+* @param HDC handle for the displayed DC, for painting
+* @param HBITMAP dead bitmap to dead element
+* @param HBITMAP miss bitmap to a missed element
+*/
+void BattleGrid::drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss) {
+    HDC hdcMem = CreateCompatibleDC(hdc);
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            if (_grid[i][j] == MESH_DEAD) {
+                SelectObject (hdcMem, dead);
+                BitBlt(hdc, _xPos + j * _sampling + 2, _yPos + i * _sampling + 1, 35, 39, hdcMem, 0, 0, SRCCOPY);
+            }
+            if (_grid[i][j] == MESH_MISS) {
+                SelectObject (hdcMem, miss);
+                BitBlt(hdc, _xPos + j * _sampling + 3, _yPos + i * _sampling + 1, 35, 39, hdcMem, 0, 0, SRCCOPY);
+            }
+        }
+    }
+    DeleteDC(hdcMem);
+}
+
+/**
+* It draws the grid with white color and forces to redraw the rectangle
+* @param HWND the main window handler
+* @param HDC handle for the dispalied DC, for painting
+*/
 void BattleGrid::invalidateGrid(HWND hwnd, HDC hdc) {
     RECT rect;
     rect.left = _xPos - 1;
@@ -406,20 +441,28 @@ void BattleGrid::invalidateGrid(HWND hwnd, HDC hdc) {
     rect.bottom = _yPos + _sampling * 10 + 1;
     HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
     FillRect(hdc, &rect, hBrush);
+    DeleteObject(hBrush);
     InvalidateRect(hwnd, &rect, false);
 }
-
 /**
-* Getters and setters
+* The methods attack the ship having the the coordinate where the mouse was pressed
+* @param int x coordinate from GDI
+* @param int y coordinate from GDI
+* @return int value of the attack result
 */
-int BattleGrid::getXpos() {
-    return _xPos;
-}
-
-int BattleGrid::getYpos() {
-    return _yPos;
-}
-
-int BattleGrid::getSampling() {
-    return _sampling;
+int BattleGrid::attackByCoords(int x, int y) {
+    int deltaX = x - _xPos;
+    int deltaY = y - _yPos;
+    if (deltaX < 0 || deltaY < 0) {
+        _attackResult = ATTACK_NONE;
+        return ATTACK_NONE;
+    }
+    _attackResult = attack(deltaY / _sampling ,deltaX / _sampling);
+    if (_attackResult == ATTACK_SUCCESS) {
+        if (checkNeighbours())
+            dotWounded();
+        else
+            dotDead();
+    }
+    return _attackResult;
 }
