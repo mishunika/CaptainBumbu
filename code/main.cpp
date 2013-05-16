@@ -57,7 +57,7 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     hwnd = CreateWindowEx (
              0,                   /* Extended possibilites for variation */
              szClassName,         /* Classname */
-             "Code::Blocks Template Windows App",       /* Title Text */
+             "Captain Bumbu",     /* Title Text */
              WS_OVERLAPPEDWINDOW, /* default window */
              CW_USEDEFAULT,       /* Windows decides the position */
              CW_USEDEFAULT,       /* where the window ends up on the screen */

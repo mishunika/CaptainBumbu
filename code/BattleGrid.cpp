@@ -10,6 +10,14 @@ BattleGrid::BattleGrid(int xPos, int yPos, int sampling, bool enemy) {
     _sampling = sampling;
     _startAttack = false;
     _enemy = enemy;
+    _shipNuber[0] = 1;
+    _shipNuber[1] = 2;
+    _shipNuber[2] = 3;
+    _shipNuber[3] = 4;
+    _shipSize[0] = 4;
+    _shipSize[1] = 3;
+    _shipSize[2] = 2;
+    _shipSize[3] = 1;
 }
 
 /**

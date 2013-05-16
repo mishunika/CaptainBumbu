@@ -14,8 +14,8 @@ private:
     /**
     * Arrays used for shuffeling the ships on the grid
     */
-    int _shipNuber[4] = {1, 2, 3, 4};
-    int _shipSize[4] = {4, 3, 2, 1};
+    int _shipNuber[4];
+    int _shipSize[4];
 
     int _xPos;
     int _yPos;
