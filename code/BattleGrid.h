@@ -82,6 +82,7 @@ public:
     void invalidateGrid(HWND hwnd, HDC hdc);
     void drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss);
     int attackByCoords(int x, int y);
+    bool isAlive();
 };
 
 #endif

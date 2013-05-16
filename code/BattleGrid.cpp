@@ -474,3 +474,20 @@ int BattleGrid::attackByCoords(int x, int y) {
     }
     return _attackResult;
 }
+
+/**
+* This method checks if there is at least one alive section on the grid.
+* @return bool true if is alive.
+*/
+bool BattleGrid::isAlive()
+{
+    for(int i = 0; i < 10; i++)
+    {
+        for(int j = 0; j < 10; j++)
+        {
+            if(_grid[i][j] == MESH_SHIP)
+                return true;
+        }
+    }
+    return false;
+}

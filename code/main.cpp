@@ -19,7 +19,7 @@ BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING, false);
 BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING, true);
 HBITMAP hatch, miss, dead;
 
-bool startGame = false;
+bool gameStarted = false;
 HINSTANCE hInst;
 int WINAPI WinMain (HINSTANCE hThisInstance,
                     HINSTANCE hPrevInstance,
@@ -166,15 +166,17 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         return 1;*/
 
     case WM_COMMAND: {
-            switch (LOWORD(wParam)) {
+        switch (LOWORD(wParam)) {
             case IDC_BUTTON_RANDOM:
-                if (!startGame) {
+                if (!gameStarted) {
                     friendGrid.shuffleShip();
                     friendGrid.invalidateGrid(hwnd, hdc);
+                    enemyGrid.shuffleShip();
+                    enemyGrid.invalidateGrid(hwnd, hdc);
                 }
                 break;
             case IDC_START_GAME:
-                startGame = true;
+                gameStarted = true;
                 enemyGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
                 friendGrid._attackResult = BattleGrid::ATTACK_MISS;
                 break;
@@ -182,7 +184,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         }
         break;
     case WM_LBUTTONUP: {
-            if (startGame) {
+            if (gameStarted) {
                 int xPos = LOWORD (lParam);
                 int yPos = HIWORD (lParam);
                 if (enemyGrid._attackResult == BattleGrid::ATTACK_NONE || enemyGrid._attackResult == BattleGrid::ATTACK_SUCCESS) {
@@ -194,6 +196,17 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                         enemyGrid.invalidateGrid(hwnd, hdc);
                 } else {
                     friendGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
+                }
+
+                if(!enemyGrid.isAlive())
+                {
+                    MessageBox(NULL, "Yay! You are the captain!", "Winner!", MB_OK);
+                    gameStarted = false;
+                }
+                else if (!friendGrid.isAlive())
+                {
+                    MessageBox(NULL, "Unfortunately, the enemy kicked your ass.", "Loser!", MB_OK);
+                    gameStarted = false;
                 }
             }
         }
