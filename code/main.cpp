@@ -17,7 +17,7 @@ char szClassName[ ] = "CaptainBumbu";
 
 BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING, false);
 BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING, true);
-HBITMAP hatch, miss, dead;
+HBITMAP hatch, miss, dead, bumbu, bumbu_x;
 
 bool gameStarted = false;
 HINSTANCE hInst;
@@ -119,6 +119,8 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     case WM_CREATE: {
             hatch = (HBITMAP)LoadImage(hInst, "../bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            bumbu = (HBITMAP)LoadImage(hInst, "../bmp/bumbu.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            bumbu_x = (HBITMAP)LoadImage(hInst, "../bmp/bumbu_x.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             dead  = (HBITMAP)LoadImage(hInst, "../bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             miss  = (HBITMAP)LoadImage(hInst, "../bmp/punctisorx2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             hBtnRandom = CreateWindowEx(NULL,
@@ -151,11 +153,11 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             HDC paintHdc = BeginPaint(hwnd, &ps);
 
             friendGrid.drawGrid(paintHdc);
-            friendGrid.drawLivingShips(paintHdc, hatch);
-            friendGrid.drawDamage(paintHdc, dead, miss);
+            friendGrid.drawLivingShips(paintHdc, hatch, bumbu);
+            friendGrid.drawDamage(paintHdc, dead, miss, bumbu_x);
 
             enemyGrid.drawGrid(paintHdc);
-            enemyGrid.drawDamage(paintHdc, dead, miss);
+            enemyGrid.drawDamage(paintHdc, dead, miss, bumbu_x);
 
 
             EndPaint(hwnd, &ps);

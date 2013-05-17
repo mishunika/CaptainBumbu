@@ -31,6 +31,15 @@ void BattleGrid::shuffleShip() {
         }
     }
 
+    /*
+     * easterShipType selects one of the ship types from 1, 2, 3, 4 cells.
+     * easterShipIndex selects the ship of the specified type
+     * easterShipCell the cell index that will contain a bumb :)
+     */
+    int easterShipType = rand() % 4;
+    int easterShipIndex = rand() % _shipNuber[easterShipType];
+    int easterShipCell = rand() % _shipSize[easterShipIndex];
+
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < _shipNuber[i]; j++) {
             int shipSize = _shipSize[i];
@@ -59,6 +68,22 @@ void BattleGrid::shuffleShip() {
                 }
                 if (placed_success) {
                     replaceValues(MESH_TEMP, MESH_SHIP);
+                    if(easterShipType == i && easterShipIndex == j)
+                    {
+                        char * message = new char[100];
+                        if(orientation == ORIENTATION_HORIZONTAL)
+                        {
+                            _grid[row][coll + easterShipCell] = MESH_BUMB;
+                            sprintf(message, "%d %d", row, coll+easterShipCell);
+                        }
+                        else
+                        {
+                            _grid[row + easterShipCell][coll] = MESH_BUMB;
+                            sprintf(message, "%d %d", row + easterShipCell, coll);
+                        }
+
+                        MessageBox(NULL, message, "AE", MB_OK);
+                    }
                     break;
                 } else
                     replaceValues(MESH_TEMP, MESH_NONE);
@@ -153,13 +178,13 @@ bool BattleGrid::checkNeighbours() {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
             if (_grid[i][j] == MESH_DEAD) {
-                if (checkBounds(i + 1, j) && _grid[i + 1][j] == MESH_SHIP)
+                if (checkBounds(i + 1, j) && (_grid[i + 1][j] == MESH_SHIP || _grid[i + 1][j] == MESH_BUMB))
                     return true;
-                if (checkBounds(i - 1, j) && _grid[i - 1][j] == MESH_SHIP)
+                if (checkBounds(i - 1, j) && (_grid[i - 1][j] == MESH_SHIP || _grid[i - 1][j] == MESH_BUMB))
                     return true;
-                if (checkBounds(i, j + 1) && _grid[i][j + 1] == MESH_SHIP)
+                if (checkBounds(i, j + 1) && (_grid[i][j + 1] == MESH_SHIP || _grid[i][j + 1] == MESH_BUMB))
                     return true;
-                if (checkBounds(i, j - 1) && _grid[i][j - 1] == MESH_SHIP)
+                if (checkBounds(i, j - 1) && (_grid[i][j - 1] == MESH_SHIP || _grid[i][j - 1] == MESH_BUMB))
                     return true;
             }
         }
@@ -173,7 +198,7 @@ bool BattleGrid::checkNeighbours() {
 void BattleGrid::dotWounded() {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            if (_grid[i][j] == MESH_DEAD) {
+            if (_grid[i][j] == MESH_DEAD || _grid[i][j] == MESH_BUMB_DEAD) {
                 if (checkBounds(i + 1, j + 1))
                     _grid[i + 1][j + 1] = MESH_MISS;
                 if (checkBounds(i - 1, j + 1))
@@ -196,7 +221,7 @@ void BattleGrid::dotDead() {
             if (_grid[i][j] == MESH_DEAD) {
                 for (int k = i - 1; k <= i + 1; k++) {
                     for (int l = j - 1; l <= j + 1; l++) {
-                        if (checkBounds(k, l) && _grid[k][l] != MESH_DEAD)
+                        if (checkBounds(k, l) && _grid[k][l] != MESH_DEAD && _grid[k][l] != MESH_BUMB_DEAD)
                             _grid[k][l] = MESH_MISS;
                     }
                 }
@@ -272,7 +297,7 @@ int BattleGrid::attackPosition(int position) {
         int j = _attackColl[k];
         switch (position) {
         case ATTACK_RIGHT:
-            if (_grid[i][j] == MESH_DEAD && checkBounds(i, j + 1) && (_grid[i][j + 1] == MESH_NONE || _grid[i][j + 1] == MESH_SHIP)) {
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i, j + 1) && (_grid[i][j + 1] == MESH_NONE || _grid[i][j + 1] == MESH_SHIP || _grid[i][j + 1] == MESH_BUMB)) {
                 int result = attack(i, j + 1);
                 /// Check if it is different from none
                 if (result != ATTACK_NONE)
@@ -280,7 +305,7 @@ int BattleGrid::attackPosition(int position) {
             }
             break;
         case ATTACK_LEFT:
-            if (_grid[i][j] == MESH_DEAD && checkBounds(i, j - 1) && (_grid[i][j - 1] == MESH_NONE || _grid[i][j - 1] == MESH_SHIP)) {
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i, j - 1) && (_grid[i][j - 1] == MESH_NONE || _grid[i][j - 1] == MESH_SHIP || _grid[i][j - 1] == MESH_BUMB)) {
                 int result = attack(i, j - 1);
                 /// Check if it is different from none
                 if (result != ATTACK_NONE)
@@ -288,7 +313,7 @@ int BattleGrid::attackPosition(int position) {
             }
             break;
         case ATTACK_UP:
-            if (_grid[i][j] == MESH_DEAD && checkBounds(i - 1, j) && (_grid[i - 1][j] == MESH_NONE || _grid[i - 1][j] == MESH_SHIP)) {
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i - 1, j) && (_grid[i - 1][j] == MESH_NONE || _grid[i - 1][j] == MESH_SHIP || _grid[i - 1][j] == MESH_BUMB)) {
                 int result = attack(i - 1, j);
                 /// Check if it is different from none
                 if (result != ATTACK_NONE)
@@ -296,7 +321,7 @@ int BattleGrid::attackPosition(int position) {
             }
             break;
         case ATTACK_DOWN:
-            if (_grid[i][j] == MESH_DEAD && checkBounds(i + 1, j) && (_grid[i + 1][j] == MESH_NONE || _grid[i + 1][j] == MESH_SHIP)) {
+            if (_grid[i][j] == MESH_DEAD && checkBounds(i + 1, j) && (_grid[i + 1][j] == MESH_NONE || _grid[i + 1][j] == MESH_SHIP || _grid[i + 1][j] == MESH_BUMB)) {
                 int result = attack(i + 1, j);
                 /// Check if it is different from none
                 if (result != ATTACK_NONE)
@@ -328,6 +353,22 @@ int BattleGrid::attack(int row, int coll) {
         _grid[row][coll] = MESH_DEAD;
         return ATTACK_SUCCESS;
     }
+
+    if (_grid[row][coll] == MESH_BUMB)
+    {
+        // Oh, you've just killed the captain.
+        _grid[row][coll] = MESH_BUMB_DEAD;
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                if(_grid[i][j] == MESH_SHIP)
+                    _grid[i][j] = MESH_DEAD;
+            }
+        }
+        return ATTACK_SUCCESS;
+    }
+    return ATTACK_NONE;
 }
 
 /**
@@ -370,7 +411,7 @@ void BattleGrid::drawFriendShip(HDC hdc) {
 
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
-            if (_grid[i][j] == MESH_SHIP || _grid[i][j] == MESH_DEAD) {
+            if (_grid[i][j] == MESH_SHIP || _grid[i][j] == MESH_DEAD || _grid[i][j] == MESH_BUMB || _grid[i][j] == MESH_BUMB_DEAD) {
                 if (!checkBounds(i, j - 1) || (_grid[i][j - 1] == MESH_NONE || _grid[i][j - 1] == MESH_MISS)) {
                     MoveToEx(hdc, _xPos + j * _sampling, _yPos + i * _sampling, NULL);
                     LineTo(hdc, _xPos + j * _sampling, _yPos + i * _sampling + _sampling);
@@ -398,13 +439,18 @@ void BattleGrid::drawFriendShip(HDC hdc) {
 * @param HDC handle for the displayed DC, for painting
 * @param HBITMAP hatch bitmap to the hatched element
 */
-void BattleGrid::drawLivingShips(HDC hdc, HBITMAP hatch) {
+void BattleGrid::drawLivingShips(HDC hdc, HBITMAP hatch, HBITMAP bumbu) {
     HDC hdcMem = CreateCompatibleDC(hdc);
-    SelectObject (hdcMem, hatch);
 
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
             if (_grid[i][j] == MESH_SHIP) {
+                SelectObject (hdcMem, hatch);
+                BitBlt(hdc, _xPos + j * _sampling + 3, _yPos + i * _sampling + 1, 35, 39, hdcMem, 0, 0, SRCCOPY);
+            }
+
+            if (_grid[i][j] == MESH_BUMB) {
+                SelectObject (hdcMem, bumbu);
                 BitBlt(hdc, _xPos + j * _sampling + 3, _yPos + i * _sampling + 1, 35, 39, hdcMem, 0, 0, SRCCOPY);
             }
         }
@@ -418,7 +464,7 @@ void BattleGrid::drawLivingShips(HDC hdc, HBITMAP hatch) {
 * @param HBITMAP dead bitmap to dead element
 * @param HBITMAP miss bitmap to a missed element
 */
-void BattleGrid::drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss) {
+void BattleGrid::drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss, HBITMAP bumbu_x) {
     HDC hdcMem = CreateCompatibleDC(hdc);
 
     for (int i = 0; i < 10; i++) {
@@ -429,6 +475,10 @@ void BattleGrid::drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss) {
             }
             if (_grid[i][j] == MESH_MISS) {
                 SelectObject (hdcMem, miss);
+                BitBlt(hdc, _xPos + j * _sampling + 3, _yPos + i * _sampling + 1, 35, 39, hdcMem, 0, 0, SRCCOPY);
+            }
+            if (_grid[i][j] == MESH_BUMB_DEAD) {
+                SelectObject (hdcMem, bumbu_x);
                 BitBlt(hdc, _xPos + j * _sampling + 3, _yPos + i * _sampling + 1, 35, 39, hdcMem, 0, 0, SRCCOPY);
             }
         }
@@ -485,8 +535,11 @@ bool BattleGrid::isAlive()
     {
         for(int j = 0; j < 10; j++)
         {
-            if(_grid[i][j] == MESH_SHIP)
+            if(_grid[i][j] == MESH_SHIP || _grid[i][j] == MESH_BUMB)
                 return true;
+
+            if(_grid[i][j] == MESH_BUMB_DEAD)
+                return false;
         }
     }
     return false;

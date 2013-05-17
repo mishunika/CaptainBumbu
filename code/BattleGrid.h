@@ -50,6 +50,8 @@ public:
     static const int MESH_DEAD = 3;
     /// This one is special... it is used only while shuffling the ships
     static const int MESH_TEMP = 4;
+    static const int MESH_BUMB = 5;
+    static const int MESH_BUMB_DEAD = 6;
 
     /// This are the constants for attacking
     static const int ATTACK_RIGHT = 0;
@@ -78,9 +80,10 @@ public:
 
     void drawGrid(HDC hdc);
     void drawFriendShip(HDC hdc);
-    void drawLivingShips(HDC hdc, HBITMAP hatch);
+    void drawLivingShips(HDC hdc, HBITMAP hatch, HBITMAP bumbu);
     void invalidateGrid(HWND hwnd, HDC hdc);
-    void drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss);
+    void drawDamage(HDC hdc, HBITMAP dead, HBITMAP miss, HBITMAP bumbu_x);
+    void drawBumb(HDC hdc, HBITMAP alive, HBITMAP dead);
     int attackByCoords(int x, int y);
     bool isAlive();
 };
