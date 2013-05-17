@@ -39,7 +39,7 @@ Windows complex application.
 ## The result when I win
 ![Result images](https://github.com/mishunika/CaptainBumbu/blob/master/docs/screenshot-1.png?raw=true)
 
-##
+## Result when AI wins
 ![Result images](https://github.com/mishunika/CaptainBumbu/blob/master/docs/screenshot-2.png?raw=true)
 
 ## Usefullness
