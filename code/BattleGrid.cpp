@@ -72,17 +72,9 @@ void BattleGrid::shuffleShip() {
                     {
                         char * message = new char[100];
                         if(orientation == ORIENTATION_HORIZONTAL)
-                        {
                             _grid[row][coll + easterShipCell] = MESH_BUMB;
-                            sprintf(message, "%d %d", row, coll+easterShipCell);
-                        }
                         else
-                        {
                             _grid[row + easterShipCell][coll] = MESH_BUMB;
-                            sprintf(message, "%d %d", row + easterShipCell, coll);
-                        }
-
-                        MessageBox(NULL, message, "AE", MB_OK);
                     }
                     break;
                 } else
