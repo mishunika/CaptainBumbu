@@ -9,6 +9,8 @@
 
 #define SAMPLING            40
 
+
+void checkState();
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
@@ -112,7 +114,10 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         enemyGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
 
     if (friendHit)
+    {
         friendGrid.invalidateGrid(hwnd, hdc);
+        checkState();
+    }
 
     switch (message)                  /* handle the messages */
     {
@@ -200,16 +205,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     friendGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
                 }
 
-                if(!enemyGrid.isAlive())
-                {
-                    MessageBox(NULL, "Yay! You are the captain!", "Winner!", MB_OK);
-                    gameStarted = false;
-                }
-                else if (!friendGrid.isAlive())
-                {
-                    MessageBox(NULL, "Unfortunately, the enemy kicked your ass.", "Loser!", MB_OK);
-                    gameStarted = false;
-                }
+                checkState();
             }
         }
         break;
@@ -224,4 +220,20 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     }
     ReleaseDC(hwnd, hdc);
     return 0;
+}
+
+void checkState()
+{
+    if(!gameStarted)
+        return;
+    if(!enemyGrid.isAlive())
+    {
+        MessageBox(NULL, "Yay! You are the captain!", "Winner!", MB_OK);
+        gameStarted = false;
+    }
+    else if (!friendGrid.isAlive())
+    {
+        MessageBox(NULL, "Unfortunately, the enemy kicked your ass.", "Loser!", MB_OK);
+        gameStarted = false;
+    }
 }
