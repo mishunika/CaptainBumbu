@@ -124,11 +124,11 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     case WM_CREATE: {
 
-            hatch = (HBITMAP)LoadImage(hInst, "../bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            bumbu = (HBITMAP)LoadImage(hInst, "../bmp/bumbu.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            bumbu_x = (HBITMAP)LoadImage(hInst, "../bmp/bumbu_x.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            dead  = (HBITMAP)LoadImage(hInst, "../bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            miss  = (HBITMAP)LoadImage(hInst, "../bmp/punctisorx2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            hatch = (HBITMAP)LoadImage(hInst, "bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            bumbu = (HBITMAP)LoadImage(hInst, "bmp/bumbu.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            bumbu_x = (HBITMAP)LoadImage(hInst, "bmp/bumbu_x.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            dead  = (HBITMAP)LoadImage(hInst, "bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            miss  = (HBITMAP)LoadImage(hInst, "bmp/punctisorx2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
             hBtnRandom = CreateWindowEx(NULL,
                             TEXT("button"),
@@ -180,8 +180,8 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                 if (!gameStarted) {
                     friendGrid.shuffleShip();
                     friendGrid.invalidateGrid(hwnd, hdc);
-                    enemyGrid.shuffleShip();
-                    enemyGrid.invalidateGrid(hwnd, hdc);
+                    //enemyGrid.shuffleShip();
+                    //enemyGrid.invalidateGrid(hwnd, hdc);
                 }
                 break;
             case IDC_START_GAME:
