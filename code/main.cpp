@@ -120,7 +120,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     case WM_CREATE: {
             hatch = (HBITMAP)LoadImage(hInst, "../bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             dead  = (HBITMAP)LoadImage(hInst, "../bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            miss  = (HBITMAP)LoadImage(hInst, "../bmp/punctisor.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            miss  = (HBITMAP)LoadImage(hInst, "../bmp/punctisorx2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             hBtnRandom = CreateWindowEx(NULL,
                             TEXT("button"),
                             "Random",
