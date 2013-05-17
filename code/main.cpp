@@ -1,5 +1,5 @@
 #include "BattleGrid.h"
-#include "BattleGrid.cpp"
+//#include "BattleGrid.cpp"
 #define IDC_BUTTON_RANDOM   01
 #define IDC_START_GAME      02
 #define FRIEND_GRID_X       20
@@ -118,9 +118,9 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     {
 
     case WM_CREATE: {
-            hatch = (HBITMAP)LoadImage(hInst, "../bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            dead  = (HBITMAP)LoadImage(hInst, "../bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            miss  = (HBITMAP)LoadImage(hInst, "../bmp/punctisor.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            hatch = (HBITMAP)LoadImage(hInst, "bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            dead  = (HBITMAP)LoadImage(hInst, "bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            miss  = (HBITMAP)LoadImage(hInst, "bmp/punctisor.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
             hBtnRandom = CreateWindowEx(NULL,
                             TEXT("button"),
                             "Random",
