@@ -9,6 +9,8 @@
 
 #define SAMPLING            40
 
+
+void checkState();
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
@@ -17,7 +19,7 @@ char szClassName[ ] = "CaptainBumbu";
 
 BattleGrid friendGrid(FRIEND_GRID_X, FRIEND_GRID_Y, SAMPLING, false);
 BattleGrid enemyGrid(ENEMY_GRID_X, ENEMY_GRID_Y, SAMPLING, true);
-HBITMAP hatch, miss, dead;
+HBITMAP hatch, miss, dead, bumbu, bumbu_x;
 
 bool gameStarted = false;
 HINSTANCE hInst;
@@ -112,15 +114,22 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
         enemyGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
 
     if (friendHit)
+    {
         friendGrid.invalidateGrid(hwnd, hdc);
+        checkState();
+    }
 
     switch (message)                  /* handle the messages */
     {
 
     case WM_CREATE: {
-            hatch = (HBITMAP)LoadImage(hInst, "bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            dead  = (HBITMAP)LoadImage(hInst, "bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-            miss  = (HBITMAP)LoadImage(hInst, "bmp/punctisor.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+            hatch = (HBITMAP)LoadImage(hInst, "../bmp/sexy hasura.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            bumbu = (HBITMAP)LoadImage(hInst, "../bmp/bumbu.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            bumbu_x = (HBITMAP)LoadImage(hInst, "../bmp/bumbu_x.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            dead  = (HBITMAP)LoadImage(hInst, "../bmp/x smexy.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+            miss  = (HBITMAP)LoadImage(hInst, "../bmp/punctisorx2.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
             hBtnRandom = CreateWindowEx(NULL,
                             TEXT("button"),
                             "Random",
@@ -151,11 +160,11 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             HDC paintHdc = BeginPaint(hwnd, &ps);
 
             friendGrid.drawGrid(paintHdc);
-            friendGrid.drawLivingShips(paintHdc, hatch);
-            friendGrid.drawDamage(paintHdc, dead, miss);
+            friendGrid.drawLivingShips(paintHdc, hatch, bumbu);
+            friendGrid.drawDamage(paintHdc, dead, miss, bumbu_x);
 
             enemyGrid.drawGrid(paintHdc);
-            enemyGrid.drawDamage(paintHdc, dead, miss);
+            enemyGrid.drawDamage(paintHdc, dead, miss, bumbu_x);
 
 
             EndPaint(hwnd, &ps);
@@ -198,16 +207,7 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                     friendGrid._attackResult = BattleGrid::ATTACK_SUCCESS;
                 }
 
-                if(!enemyGrid.isAlive())
-                {
-                    MessageBox(NULL, "Yay! You are the captain!", "Winner!", MB_OK);
-                    gameStarted = false;
-                }
-                else if (!friendGrid.isAlive())
-                {
-                    MessageBox(NULL, "Unfortunately, the enemy kicked your ass.", "Loser!", MB_OK);
-                    gameStarted = false;
-                }
+                checkState();
             }
         }
         break;
@@ -222,4 +222,20 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     }
     ReleaseDC(hwnd, hdc);
     return 0;
+}
+
+void checkState()
+{
+    if(!gameStarted)
+        return;
+    if(!enemyGrid.isAlive())
+    {
+        MessageBox(NULL, "Yay! You are the captain!", "Winner!", MB_OK);
+        gameStarted = false;
+    }
+    else if (!friendGrid.isAlive())
+    {
+        MessageBox(NULL, "Unfortunately, the enemy kicked your ass.", "Loser!", MB_OK);
+        gameStarted = false;
+    }
 }
