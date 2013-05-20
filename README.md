@@ -55,4 +55,4 @@ The task management was very useful and worked like a charm for us.
 The team consisted of : Eugen Ungureanu, Mihai Iachimovschi, Serigu Terman.
 
 ## Additional Notes
-If the bmps are not displayed, you should change in WM_CREATE, the LoadImage functions' path names by adding "../" at the begining.
+If the bmps are not displayed, you should change in WM_CREATE, the LoadImage functions' path names by adding "../" at the beginning.
